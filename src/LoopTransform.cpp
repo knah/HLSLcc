@@ -187,27 +187,36 @@ namespace HLSLcc
         // Ok, at least we have the comparison + breakc combo at top. Try to find the induction variable
         uint32_t inductionVarIdx = 0;
 
-        Instruction *lastInst = li.m_EndLoop - 1;
-        if (lastInst->eOpcode != OPCODE_IADD)
-            return;
-        if (lastInst->asOperands[0].eType != OPERAND_TYPE_TEMP)
-            return;
+        Instruction *lastInst = li.m_EndLoop;
+        while(lastInst != breakInst) {
+            lastInst--;
 
-        if (lastInst->asOperands[0].GetNumSwizzleElements() != 1)
-            return;
+            if (lastInst->eOpcode != OPCODE_IADD)
+                continue;
+            if (lastInst->asOperands[0].eType != OPERAND_TYPE_TEMP)
+                continue;
 
-        uint32_t indVar = lastInst->asOperands[0].ui32RegisterNumber;
-        // Verify that the induction variable actually matches.
-        if (cmpInst->asOperands[1].eType == OPERAND_TYPE_TEMP && cmpInst->asOperands[1].ui32RegisterNumber == indVar)
-            inductionVarIdx = 1;
-        else if (cmpInst->asOperands[2].eType == OPERAND_TYPE_TEMP && cmpInst->asOperands[2].ui32RegisterNumber == indVar)
-            inductionVarIdx = 2;
-        else
-            return;
+            if (lastInst->asOperands[0].GetNumSwizzleElements() != 1)
+                continue;
 
-        // Verify that we also read from the induction variable in the last instruction
-        if (!((lastInst->asOperands[1].eType == OPERAND_TYPE_TEMP && lastInst->asOperands[1].ui32RegisterNumber == indVar) ||
+            uint32_t indVar = lastInst->asOperands[0].ui32RegisterNumber;
+            // Verify that the induction variable actually matches.
+            if (cmpInst->asOperands[1].eType == OPERAND_TYPE_TEMP && cmpInst->asOperands[1].ui32RegisterNumber == indVar)
+                inductionVarIdx = 1;
+            else if (cmpInst->asOperands[2].eType == OPERAND_TYPE_TEMP && cmpInst->asOperands[2].ui32RegisterNumber == indVar)
+                inductionVarIdx = 2;
+            else
+                continue;
+
+            // Verify that we also read from the induction variable in the last instruction
+            if (!((lastInst->asOperands[1].eType == OPERAND_TYPE_TEMP && lastInst->asOperands[1].ui32RegisterNumber == indVar) ||
               (lastInst->asOperands[2].eType == OPERAND_TYPE_TEMP && lastInst->asOperands[2].ui32RegisterNumber == indVar)))
+                continue;
+
+            break; // current instr is good
+        }
+
+        if (lastInst == breakInst)
             return;
 
         // Nvidia compiler bug workaround: The shader compiler tries to be smart and unrolls constant loops,
