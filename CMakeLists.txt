@@ -12,6 +12,7 @@ set(HLSLCC_SRC
 		src/DataTypeAnalysis.cpp
 		src/Declaration.cpp
 		src/decode.cpp
+		src/ExternalCApi.cpp
 		src/HLSLcc.cpp
 		src/HLSLccToolkit.cpp
 		src/HLSLCrossCompilerContext.cpp

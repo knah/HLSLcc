@@ -809,6 +809,17 @@ HLSLCC_API int HLSLCC_APIENTRY TranslateHLSLFromMem(const char* shader,
     HLSLccReflection& reflectionCallbacks,
     GLSLShader* result);
 
+HLSLCC_API int HLSLCC_APIENTRY TranslateHLSLFromMemSimple(const char* shader,
+    unsigned int flags,
+    GLLang language,
+    GlExtensions extensions,
+    GLSLShader* result);
+
+HLSLCC_API int HLSLCC_APIENTRY GetShaderCodeLength(GLSLShader* shader);
+HLSLCC_API const char* HLSLCC_APIENTRY GetShaderCodeChars(GLSLShader* shader);
+HLSLCC_API GLSLShader* HLSLCC_APIENTRY AllocShader();
+HLSLCC_API void HLSLCC_APIENTRY FreeShader(GLSLShader* shader);
+
 #ifdef __cplusplus
 }
 #endif
