@@ -37,6 +37,8 @@ set(HLSLCC_SRC
 
 if(HLSLCC_LIBRARY_SHARED)
 	add_library(hlslcc SHARED ${HLSLCC_SRC})
+	add_compile_definitions(HLSLCC_DYNLIB)
+	add_compile_definitions(libHLSLcc_EXPORTS)
 else(HLSLCC_LIBRARY_SHARED)
 	add_library(hlslcc STATIC ${HLSLCC_SRC})
 endif(HLSLCC_LIBRARY_SHARED)
